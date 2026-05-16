@@ -1,0 +1,8 @@
+/build-qnx
+/build-qnx-client
+/build-qnx-linux
+.vscode
+*.log
+*.tmp
+*.bak
+/build*

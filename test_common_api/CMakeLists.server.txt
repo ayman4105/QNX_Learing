@@ -1,0 +1,49 @@
+project(HelloWorld_Server)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# Find packages (Linux system)
+find_package(CommonAPI REQUIRED)
+find_package(CommonAPI-SomeIP REQUIRED)
+find_package(vsomeip3 REQUIRED)
+
+message(STATUS "CommonAPI found: ${CommonAPI_FOUND}")
+message(STATUS "CommonAPI-SomeIP found: ${CommonAPI-SomeIP_FOUND}")
+message(STATUS "vsomeip3 found: ${vsomeip3_FOUND}")
+
+include_directories(
+    ${CMAKE_CURRENT_SOURCE_DIR}/SRC
+    ${CMAKE_CURRENT_SOURCE_DIR}/fidl/src-gen
+)
+
+set(GENERATED_SOMEIP_SOURCES
+    ${CMAKE_CURRENT_SOURCE_DIR}/fidl/src-gen/v1/commonapi/HelloWorldSomeIPDeployment.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/fidl/src-gen/v1/commonapi/HelloWorldSomeIPProxy.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/fidl/src-gen/v1/commonapi/HelloWorldSomeIPStubAdapter.cpp
+)
+
+# Server only (Lab PC)
+add_executable(HelloWorldServer
+    SRC/Server.cpp
+    ${GENERATED_SOMEIP_SOURCES}
+)
+
+target_link_libraries(HelloWorldServer
+    PUBLIC
+    CommonAPI
+    CommonAPI-SomeIP
+    vsomeip3
+)
+
+# For testing: Client on same PC
+add_executable(HelloWorldClient
+    SRC/Client.cpp
+    ${GENERATED_SOMEIP_SOURCES}
+)
+
+target_link_libraries(HelloWorldClient
+    CommonAPI
+    CommonAPI-SomeIP
+    vsomeip3
+)
